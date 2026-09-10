@@ -14,18 +14,18 @@ import { useCpfCnpjMask } from "@/hooks/useCpfCnpjMask";
 import type { TipoPessoa } from "@/lib/api/types";
 
 function DocumentoIdentificacaoField({ tipoPessoa }: { tipoPessoa: TipoPessoa }) {
-  const documentoIdentificacao = useCpfCnpjMask(tipoPessoa);
+  const { value, onChange, inputRef, raw } = useCpfCnpjMask(tipoPessoa);
 
   return (
     <Input
       label={tipoPessoa === "FISICA" ? "CPF" : "CNPJ"}
-      value={documentoIdentificacao.value}
-      onChange={documentoIdentificacao.onChange}
-      ref={documentoIdentificacao.inputRef}
+      value={value}
+      onChange={onChange}
+      ref={inputRef}
       placeholder={
         tipoPessoa === "FISICA" ? "000.000.000-00" : "00.AAA.000/0000-00"
       }
-      hint={`Cru: ${documentoIdentificacao.raw}`}
+      hint={`Cru: ${raw}`}
     />
   );
 }
@@ -43,7 +43,8 @@ export default function SandboxPage() {
   const { success, error } = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [tipoPessoa, setTipoPessoa] = useState<TipoPessoa>("FISICA");
-  const cep = useCepMask();
+  const { value: cepValue, onChange: onCepChange, inputRef: cepInputRef, raw: cepRaw } =
+    useCepMask();
 
   return (
     <div className="mx-auto max-w-4xl space-y-10 p-8">
@@ -146,11 +147,11 @@ export default function SandboxPage() {
           <div className="space-y-1">
             <Input
               label="CEP"
-              value={cep.value}
-              onChange={cep.onChange}
-              ref={cep.inputRef}
+              value={cepValue}
+              onChange={onCepChange}
+              ref={cepInputRef}
               placeholder="00000-000"
-              hint={`Cru: ${cep.raw}`}
+              hint={`Cru: ${cepRaw}`}
             />
           </div>
           <div className="space-y-3">

@@ -97,6 +97,7 @@ export function PedidoProvider({
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- bootstrap intencional na montagem
     void loadList(0);
     void get<PageResponse<CartorioResponse>>("/cartorios?size=100").then((p) =>
       setCartorios(p.content),

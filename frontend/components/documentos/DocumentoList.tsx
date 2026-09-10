@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -27,7 +27,7 @@ export function DocumentoList() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmId, setConfirmId] = useState<number | null>(null);
 
-  const load = useCallback(async (targetPage: number) => {
+  async function load(targetPage: number) {
     setLoading(true);
     try {
       const response = await get<PageResponse<DocumentoResponse>>(
@@ -47,11 +47,12 @@ export function DocumentoList() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }
 
   useEffect(() => {
     void load(0);
-  }, [load]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- carga inicial única
+  }, []);
 
   const goToPage = (target: number) => {
     void load(target);

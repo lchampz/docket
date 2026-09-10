@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      # Necessário para o teste de N+1 contar consultas de verdade.
+      hibernate.generate_statistics: true
+  flyway:
+    enabled: true
+logging:
+  level:
+    org.hibernate.SQL: warn
+    # generate_statistics faz o Hibernate despejar "Session Metrics" a cada
+    # sessão, afogando o resultado dos testes. As estatísticas continuam
+    # disponíveis via API — só o log some.
+    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: warn
