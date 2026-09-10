@@ -1,5 +1,7 @@
 # Harness
 
+> **O método vive em `../engenharia/`.** Este arquivo é o snapshot do que foi usado no docket, preservado porque `docs/` já foi publicado e o registro das fases se refere a ele. Para um projeto novo, rodar `engenharia/bootstrap.sh`.
+
 Como este projeto é executado. Ler antes de abrir qualquer spec.
 
 ## Dois papéis
