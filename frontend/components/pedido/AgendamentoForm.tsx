@@ -67,6 +67,11 @@ export function AgendamentoForm() {
   // CPF/CNPJ fica fora do react-hook-form: a máscara controla o cursor e deve
   // ser dona do valor exibido.
   const [documentoIdentificacao, setDocumentoIdentificacao] = useState("");
+  // Incrementa a cada envio bem-sucedido para remontar o campo de CPF/CNPJ.
+  // Ele guarda o próprio valor mascarado, então `reset()` do react-hook-form
+  // não o alcança — sem isto, o formulário volta vazio com o documento ainda
+  // preenchido na tela, e o envio seguinte manda vazio sem o usuário perceber.
+  const [envios, setEnvios] = useState(0);
   const [documentoIdentificacaoError, setDocumentoIdentificacaoError] = useState<
     string | undefined
   >();
@@ -85,6 +90,7 @@ export function AgendamentoForm() {
       toast.success("Documento criado com sucesso");
       reset(empty);
       setDocumentoIdentificacao("");
+      setEnvios((n) => n + 1);
     } catch (error) {
       const leftover = applyApiErrorToForm(
         error,
@@ -156,7 +162,7 @@ export function AgendamentoForm() {
         {/* key força remount ao trocar tipo: máscara muda e input anterior não
             faz mais sentido. */}
         <DocumentoIdentificacaoField
-          key={tipoPessoa}
+          key={`${tipoPessoa}-${envios}`}
           tipoPessoa={tipoPessoa}
           error={documentoIdentificacaoError}
           onChange={(raw) => {

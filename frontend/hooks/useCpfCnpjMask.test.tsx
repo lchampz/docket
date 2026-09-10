@@ -1,4 +1,4 @@
-import { render, renderHook, screen } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import userEvent from "@testing-library/user-event";
 import type { TipoPessoa } from "@/lib/api/types";
@@ -50,5 +50,54 @@ describe("useCpfCnpjMask", () => {
     rerender(<MaskHarness key="JURIDICA" tipo="JURIDICA" />);
     expect(screen.getByTestId("raw")).toHaveTextContent("");
     expect(screen.getByTestId("value")).toHaveTextContent("");
+  });
+});
+
+describe("remoção de caracteres", () => {
+  it("apaga o último dígito e reformata", () => {
+    const { result } = renderHook(() => useCpfCnpjMask("FISICA"));
+
+    act(() => {
+      result.current.setRaw("11144477735");
+    });
+    expect(result.current.value).toBe("111.444.777-35");
+
+    // O navegador entrega o valor já sem o caractere apagado.
+    act(() => {
+      result.current.onChange({
+        target: { value: "111.444.777-3", selectionStart: 13 },
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(result.current.value).toBe("111.444.777-3");
+    expect(result.current.raw).toBe("1114447773");
+  });
+
+  it("apagar tudo esvazia o valor bruto", () => {
+    const { result } = renderHook(() => useCpfCnpjMask("FISICA"));
+    act(() => result.current.setRaw("11144477735"));
+
+    act(() => {
+      result.current.onChange({
+        target: { value: "", selectionStart: 0 },
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(result.current.raw).toBe("");
+    expect(result.current.value).toBe("");
+  });
+
+  it("CNPJ alfanumérico também aceita remoção", () => {
+    const { result } = renderHook(() => useCpfCnpjMask("JURIDICA"));
+    act(() => result.current.setRaw("12ABC34501DE35"));
+    expect(result.current.value).toBe("12.ABC.345/01DE-35");
+
+    act(() => {
+      result.current.onChange({
+        target: { value: "12.ABC.345/01DE-3", selectionStart: 17 },
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(result.current.raw).toBe("12ABC34501DE3");
   });
 });

@@ -13,7 +13,7 @@
 | 8    | [[F8-Traducao]]        | ✅      | Código em inglês; banco e interface seguem em pt-BR                   |
 | 8.1  | [[F8.1-Convencao-Idioma]] | ✅      | Domínio volta ao pt-BR; convenções de código em inglês                |
 | 9    | [[F9-Qualidade]]       | ✅      | Testes verdes, responsivo, semântico                                  |
-| 10   | [[F10-Fechamento]]     | ⬜      | README testado do zero, fidelidade revisada tela a tela               |
+| 10   | [[F10-Fechamento]]     | ✅      | README testado do zero, fidelidade revisada tela a tela               |
 
 Estados: ⬜ não iniciada · 🟡 em andamento · ✅ fechada
 

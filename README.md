@@ -52,7 +52,7 @@ O terceiro é o ponto central. Um cartório que não emite certidão de nascimen
 
 ```bash
 cd backend  && mvn test    # 39 testes
-cd frontend && npm test    # 16 testes
+cd frontend && npm test    # 19 testes
 ```
 
 Os testes de integração sobem um **PostgreSQL real** via Testcontainers (o Docker precisa estar rodando), não um banco em memória: as migrations usam índice de expressão, `CHECK` com regex e sequence, e um banco em memória divergiria justamente nas regras que mais importam.
