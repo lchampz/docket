@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${cartorioId != null} ? 'Editar cartório' : 'Novo cartório'">Cartório</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <header th:replace="~{layout :: cabecalho}"></header>
+
+    <main>
+        <div class="cartao">
+            <h1 th:text="${cartorioId != null} ? 'Editar cartório' : 'Novo cartório'"></h1>
+
+            <form class="campos" th:object="${cartorio}"
+                  th:action="${cartorioId != null} ? @{/cartorios/{id}(id=${cartorioId})} : @{/cartorios}"
+                  method="post">
+
+                <p class="metade">
+                    <label for="nome">Nome <span class="obrigatorio">*</span></label>
+                    <input id="nome" type="text" th:field="*{nome}"
+                           th:attr="aria-invalid=${#fields.hasErrors('nome')} ? 'true' : null">
+                    <span th:if="${#fields.hasErrors('nome')}" class="erro-campo" th:errors="*{nome}"></span>
+                </p>
+
+                <p class="terco">
+                    <label for="cep">CEP <span class="obrigatorio">*</span></label>
+                    <input id="cep" type="text" th:field="*{cep}" inputmode="numeric" maxlength="8"
+                           th:attr="aria-invalid=${#fields.hasErrors('cep')} ? 'true' : null">
+                    <span th:if="${#fields.hasErrors('cep')}" class="erro-campo" th:errors="*{cep}"></span>
+                </p>
+
+                <p class="metade">
+                    <label for="rua">Rua <span class="obrigatorio">*</span></label>
+                    <input id="rua" type="text" th:field="*{rua}"
+                           th:attr="aria-invalid=${#fields.hasErrors('rua')} ? 'true' : null">
+                    <span th:if="${#fields.hasErrors('rua')}" class="erro-campo" th:errors="*{rua}"></span>
+                </p>
+
+                <p class="terco">
+                    <label for="numero">Número <span class="obrigatorio">*</span></label>
+                    <input id="numero" type="text" th:field="*{numero}"
+                           th:attr="aria-invalid=${#fields.hasErrors('numero')} ? 'true' : null">
+                    <span th:if="${#fields.hasErrors('numero')}" class="erro-campo" th:errors="*{numero}"></span>
+                </p>
+
+                <p class="terco">
+                    <label for="complemento">Complemento</label>
+                    <input id="complemento" type="text" th:field="*{complemento}">
+                </p>
+
+                <p class="metade">
+                    <label for="bairro">Bairro</label>
+                    <input id="bairro" type="text" th:field="*{bairro}">
+                </p>
+
+                <p class="metade">
+                    <label for="cidade">Cidade <span class="obrigatorio">*</span></label>
+                    <input id="cidade" type="text" th:field="*{cidade}"
+                           th:attr="aria-invalid=${#fields.hasErrors('cidade')} ? 'true' : null">
+                    <span th:if="${#fields.hasErrors('cidade')}" class="erro-campo" th:errors="*{cidade}"></span>
+                </p>
+
+                <p class="terco">
+                    <label for="uf">UF <span class="obrigatorio">*</span></label>
+                    <select id="uf" th:field="*{uf}"
+                            th:attr="aria-invalid=${#fields.hasErrors('uf')} ? 'true' : null">
+                        <option value="">Selecione</option>
+                        <option th:each="sigla : ${states}" th:value="${sigla}" th:text="${sigla}"></option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('uf')}" class="erro-campo" th:errors="*{uf}"></span>
+                </p>
+
+                <fieldset>
+                    <legend>Documentos emitidos</legend>
+                    <div class="opcoes">
+                        <label th:each="doc : ${documentos}">
+                            <input type="checkbox" th:field="*{documentoIds}" th:value="${doc.id}">
+                            <span th:text="${doc.nome}"></span>
+                        </label>
+                    </div>
+                    <span th:if="${#fields.hasErrors('documentoIds')}" class="erro-campo" th:errors="*{documentoIds}"></span>
+                </fieldset>
+
+                <div class="acoes">
+                    <button type="submit" class="botao primario">Salvar</button>
+                    <a th:href="@{/cartorios}" class="botao neutro">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: rodape}"></footer>
+</body>
+</html>

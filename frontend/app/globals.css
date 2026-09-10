@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --black-100: #2e2d2c;
+  --black80: #585756;
+  --black60: #828180;
+  --grey-40: #ababab;
+  --black20: #d5d5d5;
+  --black10: #eaeae9;
+  --cold-grey: #ebf0f5;
+  --cold-grey-40: #c4c8cc;
+  --white: #ffffff;
+  --green-dark: #008768;
+  --green-light: #dbfaf3;
+  --red: #e65562;
+  --red-medium: #f27480;
+  --blue: #3570b2;
+  --yellow: #ffaf3e;
+  /* Aproximados da arte do header/rodapé, NÃO da paleta do XD: o header é um
+     bitmap de 1366x56 e o roxo não é token do design system. Se for preciso
+     fidelidade de pixel, exportar o PNG do header no XD. */
+  --purple: #514689;
+  --purple-light: #6f63a8;
+  --purple-dark: #3f3468;
+}
+
+@theme inline {
+  --color-black-100: var(--black-100);
+  --color-black80: var(--black80);
+  --color-black60: var(--black60);
+  --color-grey-40: var(--grey-40);
+  --color-black20: var(--black20);
+  --color-black10: var(--black10);
+  --color-cold-grey: var(--cold-grey);
+  --color-cold-grey-40: var(--cold-grey-40);
+  --color-white: var(--white);
+  --color-green-dark: var(--green-dark);
+  --color-green-light: var(--green-light);
+  --color-red: var(--red);
+  --color-red-medium: var(--red-medium);
+  --color-blue: var(--blue);
+  --color-yellow: var(--yellow);
+  --color-purple: var(--purple);
+  --color-purple-light: var(--purple-light);
+  --color-purple-dark: var(--purple-dark);
+
+  --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@utility text-h1-jumbo {
+  font-size: 48px;
+  line-height: 60px;
+  font-weight: 600;
+}
+
+@utility text-h2-mega {
+  font-size: 34px;
+  line-height: 48px;
+  font-weight: 400;
+}
+
+@utility text-h3-main {
+  font-size: 24px;
+  line-height: 36px;
+  font-weight: 700;
+}
+
+@utility text-h4-title {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 600;
+}
+
+@utility text-subtitle {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+@utility text-body {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+@utility text-body-bold {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+@utility text-small {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+body {
+  background: var(--cold-grey);
+  color: var(--black-100);
+  font-family: var(--font-sans);
+}

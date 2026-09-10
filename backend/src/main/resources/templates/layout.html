@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo}">Docket</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <header class="topo" th:fragment="cabecalho">
+        <a th:href="@{/}">Docket</a>
+        <nav aria-label="Principal">
+            <a th:href="@{/cartorios}">Cartórios</a>
+        </nav>
+    </header>
+
+    <footer th:fragment="rodape">
+        <p style="text-align:center;color:var(--tinta-fraca);font-size:.85rem;padding:1.5rem;">
+            Docket — administração
+        </p>
+    </footer>
+</body>
+</html>

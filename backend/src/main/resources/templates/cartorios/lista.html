@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <th:block th:replace="~{layout :: head('Cartórios')}"></th:block>
+</head>
+<body>
+    <header th:replace="~{layout :: cabecalho}"></header>
+
+    <main>
+        <div class="cartao">
+            <h1>
+                Cartórios
+                <span class="contagem" th:text="'(' + ${page.totalElements} + ')'"></span>
+            </h1>
+
+            <div th:if="${success}" class="aviso sucesso" th:text="${success}"></div>
+            <div th:if="${error}" class="aviso erro" th:text="${error}"></div>
+
+            <form class="barra" th:action="@{/cartorios}" method="get">
+                <p class="cresce" style="margin:0;display:flex;flex-direction:column;gap:.3rem;">
+                    <label for="nome">Buscar por nome</label>
+                    <input id="nome" name="nome" type="search" th:value="${nome}" placeholder="Nome do cartório">
+                </p>
+                <button type="submit" class="botao neutro">Buscar</button>
+                <a th:href="@{/cartorios/novo}" class="botao primario" style="margin-left:auto;">Novo cartório</a>
+            </form>
+
+            <p th:if="${page.empty}" class="vazio">Nenhum cartório cadastrado</p>
+
+            <table th:unless="${page.empty}">
+                <caption>Lista de cartórios</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Endereço</th>
+                        <th scope="col">CEP</th>
+                        <th scope="col">Documentos emitidos</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${page.content}">
+                        <td data-rotulo="Nome" th:text="${c.nome}"></td>
+                        <td data-rotulo="Endereço">
+                            <span th:text="${c.rua} + ', ' + ${c.numero}"></span><br>
+                            <span th:text="${c.cidade} + '/' + ${c.uf}"></span>
+                        </td>
+                        <td data-rotulo="CEP" th:text="${c.cep}"></td>
+                        <td data-rotulo="Documentos">
+                            <span th:each="doc : ${c.documentos}" class="etiqueta" th:text="${doc.nome}"></span>
+                            <span th:if="${c.documentos.isEmpty()}" style="color:var(--tinta-fraca);">—</span>
+                        </td>
+                        <td class="acoes" data-rotulo="Ações">
+                            <a th:href="@{/cartorios/{id}/editar(id=${c.id})}" class="botao neutro">Editar</a>
+                            <form th:action="@{/cartorios/{id}/excluir(id=${c.id})}" method="post"
+                                  style="display:inline;"
+                                  th:attr="onsubmit=|return confirm('Excluir o cartório \u201c${c.nome}\u201d?');|">
+                                <button type="submit" class="botao perigo">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <nav th:if="${page.totalPages > 1}" class="paginacao" aria-label="Paginação">
+                <a th:if="${page.hasPrevious()}"
+                   th:href="@{/cartorios(page=${page.number - 1}, size=${page.size}, nome=${nome})}">Anterior</a>
+                <span th:unless="${page.hasPrevious()}" class="desabilitado">Anterior</span>
+
+                <th:block th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+                    <a th:if="${i != page.number}"
+                       th:href="@{/cartorios(page=${i}, size=${page.size}, nome=${nome})}"
+                       th:text="${i + 1}"></a>
+                    <span th:if="${i == page.number}" aria-current="page" th:text="${i + 1}"></span>
+                </th:block>
+
+                <a th:if="${page.hasNext()}"
+                   th:href="@{/cartorios(page=${page.number + 1}, size=${page.size}, nome=${nome})}">Próxima</a>
+                <span th:unless="${page.hasNext()}" class="desabilitado">Próxima</span>
+            </nav>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: rodape}"></footer>
+</body>
+</html>

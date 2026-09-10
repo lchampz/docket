@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <th:block th:replace="~{layout :: head('Não encontrado')}"></th:block>
+</head>
+<body>
+    <header th:replace="~{layout :: cabecalho}"></header>
+
+    <main>
+        <div class="cartao">
+            <h1>Não encontrado</h1>
+            <p class="aviso erro" th:text="${message}">Recurso não encontrado.</p>
+            <p><a th:href="@{/cartorios}" class="botao neutro">Voltar para cartórios</a></p>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: rodape}"></footer>
+</body>
+</html>

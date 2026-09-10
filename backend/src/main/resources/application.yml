@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: docket
+  threads:
+    virtual:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate.format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+management:
+  endpoints.web.exposure.include: health,info
+  endpoint.health.probes.enabled: true
+
+---
+spring:
+  config.activate.on-profile: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/docket
+    username: docket
+    password: docket
+
+---
+spring:
+  config.activate.on-profile: docker
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}

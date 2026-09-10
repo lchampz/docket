@@ -1,0 +1,68 @@
+name: docket
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - docket-db:/var/lib/postgresql/data
+    healthcheck:
+      # pg_isready com -U e -d: "aceitando conexão neste banco",
+      # não apenas "processo de pé".
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${BACKEND_PORT}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # 127.0.0.1 e não localhost: no Alpine localhost resolve para ::1 primeiro.
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Precisa nos DOIS momentos, e da mesma fonte:
+        #  - build: o Next congela os rewrites no routes-manifest.json
+        #  - runtime: os server components leem process.env a cada request
+        # Só no runtime = rewrite aponta para o valor default, silenciosamente.
+        BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL}
+    environment:
+      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL}
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  docket-db:

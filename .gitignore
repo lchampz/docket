@@ -1,0 +1,32 @@
+# Ambiente
+.env
+.env.local
+.env*.local
+
+# Java
+target/
+*.class
+*.jar
+*.war
+.mvn/wrapper/maven-wrapper.jar
+
+# Node
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.cursor/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
