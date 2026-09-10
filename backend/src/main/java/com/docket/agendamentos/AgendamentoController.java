@@ -1,5 +1,6 @@
 package com.docket.agendamentos;
 
+import com.docket.agendamentos.dto.AgendamentoRequest;
 import com.docket.agendamentos.dto.AgendamentoResponse;
 import com.docket.agendamentos.dto.UpdateStatusRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +31,14 @@ public class AgendamentoController {
     @Operation(summary = "Buscar agendamento por ID")
     public AgendamentoResponse findById(@PathVariable Long id) {
         return agendamentoService.findById(id);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar agendamento",
+            description = "Atualiza os dados do agendamento. O status não muda por aqui — use PATCH /{id}/status.")
+    public AgendamentoResponse update(
+            @PathVariable Long id, @Valid @RequestBody AgendamentoRequest request) {
+        return agendamentoService.update(id, request);
     }
 
     @PatchMapping("/{id}/status")

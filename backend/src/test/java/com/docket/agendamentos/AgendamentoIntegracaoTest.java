@@ -126,6 +126,45 @@ class AgendamentoIntegracaoTest extends PostgresIntegrationTest {
     }
 
     @Test
+    @DisplayName("update troca cartório e documento, mas não mexe no status")
+    void updateNaoMexeNoStatus() {
+        AgendamentoResponse criado = service.create(PEDIDO,
+                pedidoDe(CARTORIO_COMPLETO, CERTIDAO_NASCIMENTO, TipoPessoa.FISICA, CPF));
+        try {
+            service.updateStatus(criado.id(), new com.docket.agendamentos.dto.UpdateStatusRequest(
+                    StatusAgendamento.EM_ANDAMENTO));
+
+            AgendamentoResponse atualizado = service.update(criado.id(),
+                    new AgendamentoRequest(CARTORIO_COMPLETO, 5L, TipoPessoa.JURIDICA,
+                            "Acme Ltda", "12.abc.345/01de-35", null));
+
+            assertThat(atualizado.documentoNome()).isEqualTo("Escritura Pública");
+            assertThat(atualizado.documentoIdentificacao()).isEqualTo(CNPJ_ALFANUMERICO);
+            assertThat(atualizado.status())
+                    .as("status é responsabilidade do PATCH, não do PUT")
+                    .isEqualTo(StatusAgendamento.EM_ANDAMENTO);
+        } finally {
+            service.delete(criado.id());
+        }
+    }
+
+    @Test
+    @DisplayName("update com par inválido é recusado igual à criação")
+    void updateValidaPar() {
+        AgendamentoResponse criado = service.create(PEDIDO,
+                pedidoDe(CARTORIO_COMPLETO, CERTIDAO_NASCIMENTO, TipoPessoa.FISICA, CPF));
+        try {
+            assertThatThrownBy(() -> service.update(criado.id(),
+                    pedidoDe(CARTORIO_SEM_CERTIDAO, CERTIDAO_NASCIMENTO, TipoPessoa.FISICA, CPF)))
+                    .isInstanceOf(ConflictException.class)
+                    .extracting("code")
+                    .isEqualTo(ErrorCode.PAR_CARTORIO_DOCUMENTO_INVALIDO);
+        } finally {
+            service.delete(criado.id());
+        }
+    }
+
+    @Test
     @DisplayName("excluir devolve a contagem do pedido ao valor do seed")
     void exclusaoDevolveContagem() {
         long antes = repository.countByPedidoId(PEDIDO);

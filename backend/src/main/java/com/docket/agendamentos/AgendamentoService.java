@@ -54,12 +54,7 @@ public class AgendamentoService {
                 .findById(request.documentoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Documento", request.documentoId()));
 
-        if (!cartorioRepository.existsByIdAndDocumentos_Id(
-                request.cartorioId(), request.documentoId())) {
-            throw new ConflictException(
-                    ErrorCode.PAR_CARTORIO_DOCUMENTO_INVALIDO,
-                    "O cartório informado não emite esse documento.");
-        }
+        validarPar(request.cartorioId(), request.documentoId());
 
         Agendamento agendamento = new Agendamento();
         agendamento.setPedido(pedido);
@@ -75,6 +70,41 @@ public class AgendamentoService {
         return agendamentoMapper.toResponse(agendamento);
     }
 
+    /**
+     * Atualiza um agendamento por completo.
+     *
+     * <p>A tela do layout não edita agendamento — só cria e exclui —, mas a
+     * diretriz pede CRUD, e a API REST é requisito próprio. Reaproveita as
+     * mesmas regras da criação: par cartório/documento válido e documento
+     * normalizado.
+     *
+     * <p>O {@code status} <strong>não</strong> vem daqui: quem muda status é
+     * {@code PATCH /status}. Deixar dois caminhos alterando o mesmo campo é
+     * como um deles acaba divergindo.
+     */
+    public AgendamentoResponse update(Long id, AgendamentoRequest request) {
+        Agendamento agendamento = findEntityWithRelations(id);
+
+        Cartorio cartorio = cartorioRepository
+                .findById(request.cartorioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cartório", request.cartorioId()));
+
+        Documento documento = documentoRepository
+                .findById(request.documentoId())
+                .orElseThrow(() -> new ResourceNotFoundException("Documento", request.documentoId()));
+
+        validarPar(request.cartorioId(), request.documentoId());
+
+        agendamento.setCartorio(cartorio);
+        agendamento.setDocumento(documento);
+        agendamento.setTipoPessoa(request.tipoPessoa());
+        agendamento.setNomeRazaoSocial(request.nomeRazaoSocial());
+        agendamento.setDocumentoIdentificacao(Documentos.normalize(request.documentoIdentificacao()));
+        agendamento.setDataNascimento(request.dataNascimento());
+
+        return agendamentoMapper.toResponse(agendamentoRepository.save(agendamento));
+    }
+
     public AgendamentoResponse updateStatus(Long id, UpdateStatusRequest request) {
         Agendamento agendamento = findEntityWithRelations(id);
         agendamento.setStatus(request.status());
@@ -84,6 +114,15 @@ public class AgendamentoService {
     public void delete(Long id) {
         findEntityWithRelations(id);
         agendamentoRepository.deleteById(id);
+    }
+
+    /** O par tem que existir em cartorio_documento — alimenta o combo condicional. */
+    private void validarPar(Long cartorioId, Long documentoId) {
+        if (!cartorioRepository.existsByIdAndDocumentos_Id(cartorioId, documentoId)) {
+            throw new ConflictException(
+                    ErrorCode.PAR_CARTORIO_DOCUMENTO_INVALIDO,
+                    "O cartório informado não emite esse documento.");
+        }
     }
 
     private Agendamento findEntityWithRelations(Long id) {
